@@ -2063,7 +2063,18 @@ header .navbar ul li a.active {
   font-size: 2.4rem;
   color: #fff;
   filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.8));
-  animation: chatFloat 3s ease-in-out infinite alternate;
+  animation: chatPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes chatPulse {
+  from {
+    transform: scale(1);
+    filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.8));
+  }
+  to {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 20px rgba(244, 114, 182, 0.9));
+  }
 }
 
 #chat-launcher:hover {
@@ -2081,9 +2092,9 @@ header .navbar ul li a.active {
   to { transform: translateY(-5px); }
 }
 
-@keyframes chatFloat {
-  from { transform: translateY(0); }
-  to { transform: translateY(-4px); }
+@keyframes chatPulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
 }
 
 @media (max-width: 768px) {
