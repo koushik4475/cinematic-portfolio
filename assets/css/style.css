@@ -1960,26 +1960,25 @@ header .navbar ul li a.active {
   position: fixed;
   bottom: 3.5rem;
   left: 3rem;
-  width: 5.5rem;
-  height: 5.5rem;
+  width: 6.5rem;
+  height: 6.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.2rem;
+  font-size: 2.8rem;
   color: #fff;
-  background: radial-gradient(circle at 30% 30%, rgba(20, 20, 30, 0.95), rgba(0, 0, 0, 1));
+  background: radial-gradient(circle at 30% 30%, #0a1a2a, #000);
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(0, 229, 255, 0.25);
+  border: 2px solid var(--cyan);
   border-radius: 50%;
   box-shadow: 
-    0 0 25px rgba(0, 0, 0, 0.7),
-    0 0 35px rgba(0, 229, 255, 0.15),
-    inset 0 0 20px rgba(255, 255, 255, 0.05);
+    0 0 30px rgba(0, 229, 255, 0.4),
+    inset 0 0 20px rgba(0, 229, 255, 0.2);
   opacity: 0;
   pointer-events: none;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 1000;
-  overflow: hidden;
+  perspective: 1000px;
 }
 
 #scroll-top::before {
@@ -2013,30 +2012,79 @@ header .navbar ul li a.active {
 }
 
 #scroll-top:hover i {
-  transform: translateY(-3px);
-  animation: arrowPulse 1.5s ease-in-out infinite alternate;
+  animation: crazyArrow 0.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
 }
 
-/* Custom Chat Launcher — Cinematic Orb */
-#chat-launcher {
+@keyframes crazyArrow {
+  0% { transform: translateY(0) scale(1.1); filter: brightness(1); }
+  25% { transform: translateY(-8px) scale(1.3); filter: brightness(1.5) drop-shadow(0 0 15px var(--cyan)); }
+  50% { transform: translateY(2px) scale(1); filter: brightness(1.2); }
+  75% { transform: translateY(-5px) scale(1.2); filter: brightness(1.4) drop-shadow(0 0 10px var(--cyan)); }
+  100% { transform: translateY(0) scale(1.1); filter: brightness(1); }
+}
+
+/* Master Robot Head — The Orb is the face */
+#chat-launcher.robot-head {
   position: fixed;
   bottom: 3.5rem;
   right: 3rem;
-  width: 6rem;
-  height: 6rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 35% 35%, rgba(139, 92, 246, 0.9), rgba(10, 10, 20, 1));
+  width: 7rem;
+  height: 7rem;
+  background: radial-gradient(circle at 35% 35%, #2a1a4a, #050510);
+  border: 2px solid rgba(139, 92, 246, 0.8);
   border-radius: 50%;
   cursor: pointer;
   z-index: 1000;
   box-shadow: 
-    0 0 30px rgba(139, 92, 246, 0.3),
-    0 0 60px rgba(139, 92, 246, 0.1);
-  border: 1px solid rgba(139, 92, 246, 0.4);
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  overflow: hidden;
+    0 0 40px rgba(139, 92, 246, 0.5),
+    inset 0 0 25px rgba(139, 92, 246, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.robot-eyes {
+  display: flex;
+  gap: 1.4rem;
+  margin-top: -0.8rem;
+  transform-style: preserve-3d;
+}
+
+.eye {
+  width: 1.2rem;
+  height: 1.2rem;
+  background: #00f2ff;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 15px #00f2ff,
+    0 0 30px rgba(0, 242, 255, 0.6);
+  animation: robotBlink 3.5s infinite;
+  position: relative;
+}
+
+@keyframes robotBlink {
+  0%, 94%, 98%, 100% { transform: scaleY(1); }
+  96% { transform: scaleY(0.05); }
+}
+
+#chat-launcher.robot-head::after {
+  content: '';
+  position: absolute;
+  bottom: 1.8rem;
+  width: 2rem;
+  height: 0.2rem;
+  background: rgba(139, 92, 246, 0.8);
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  transition: all 0.3s ease;
+}
+
+#chat-launcher.robot-head:hover {
+  box-shadow: 0 0 60px rgba(139, 92, 246, 0.8);
 }
 
 #chat-launcher::before {
@@ -2057,14 +2105,7 @@ header .navbar ul li a.active {
   z-index: 0;
 }
 
-#chat-launcher i {
-  position: relative;
-  z-index: 1;
-  font-size: 2.8rem;
-  color: #fff;
-  filter: drop-shadow(0 0 15px rgba(139, 92, 246, 1));
-  animation: robotGlow 3s ease-in-out infinite alternate;
-}
+/* Clean up old styles */
 
 @keyframes robotGlow {
   0% {

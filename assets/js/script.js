@@ -483,6 +483,34 @@ document.getElementById('chat-launcher').addEventListener('click', () => {
     Tawk_API.toggle();
 });
 
+/* Robot Head Mouse Tracking */
+document.addEventListener('mousemove', (e) => {
+    const robot = document.querySelector('.robot-head');
+    if (!robot) return;
+    
+    const eyes = robot.querySelector('.robot-eyes');
+    const rect = robot.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Sensitivity tuning
+    const angleX = (e.clientY - centerY) / window.innerHeight * 45;
+    const angleY = (e.clientX - centerX) / window.innerWidth * 45;
+    
+    // Rotation limiters
+    const rotX = Math.max(-25, Math.min(25, -angleX));
+    const rotY = Math.max(-25, Math.min(25, angleY));
+    
+    robot.style.transform = `scale(1.1) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    
+    if (eyes) {
+        // Eyes should move less than the head for depth effect
+        const eyeX = Math.max(-8, Math.min(8, rotY * 0.4));
+        const eyeY = Math.max(-5, Math.min(5, rotX * 0.3));
+        eyes.style.transform = `translate3d(${eyeX}px, ${eyeY}px, 20px)`;
+    }
+});
+
 /* ============================================
    EXPERIENCE SECTION - Scroll Animations
    ============================================ */
