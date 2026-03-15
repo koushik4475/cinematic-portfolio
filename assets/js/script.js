@@ -248,6 +248,11 @@ $(document).ready(function () {
         $('.navbar').toggleClass('nav-toggle');
     });
 
+    $('#close-menu').click(function () {
+        $('#menu').removeClass('fa-times');
+        $('.navbar').removeClass('nav-toggle');
+    });
+
     $(window).on('scroll load', function () {
         $('#menu').removeClass('fa-times');
         $('.navbar').removeClass('nav-toggle');
@@ -475,39 +480,151 @@ var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
 })();
 
 Tawk_API.onLoad = function () {
-    // Hide the default Tawk bubbles to use our cinematic orb
+    // Hide the default Tawk bubbles to use our cinematic robo-pet
     Tawk_API.hideWidget();
+    
+    // Set custom personality
+    Tawk_API.setAttributes({
+        'name': 'Visitor',
+        'hash': 'hash_value' // Optional security
+    }, function(error){});
+
+    // We can't change the internal theme easily via API, 
+    // but we can influence the 'presence' text if the dashboard allows.
+};
+
+// Personality & Auto-Status
+Tawk_API.onChatMessageAgent = function(n){
+   // Custom logic for when agent sends message
 };
 
 document.getElementById('master-robot-orb').addEventListener('click', () => {
     Tawk_API.toggle();
 });
 
-/* AI Pet Cinematic Interaction (Creative Evolution) */
+/* ============================================
+   ROBO-PET — Interactive Companion Logic
+   ============================================ */
 document.addEventListener('DOMContentLoaded', () => {
-    const orb = document.querySelector('#master-robot-orb.ai-pet');
-    if (!orb) return;
+    const robo = document.getElementById('robo');
+    const moodEl = document.getElementById('mood');
+    const masterOrb = document.getElementById('master-robot-orb');
     
-    const eyelids = orb.querySelector('.pet-eyelids');
-    
-    // Randomized Iris Blink
-    const triggerBlink = () => {
-        eyelids.classList.add('blink');
-        setTimeout(() => eyelids.classList.remove('blink'), 400); // Match CSS transiton
-        
-        // Random interval between 4-10 seconds
-        const nextBlink = Math.random() * 6000 + 4000;
-        setTimeout(triggerBlink, nextBlink);
+    if (!robo || !moodEl) return;
+
+    const LE = { x: 48, y: 48 }, RE = { x: 72, y: 48 };
+    const g = id => document.getElementById(id);
+    const els = {
+        li: g('liris'), ri: g('riris'),
+        lp: g('lpup'), rp: g('rpup'),
+        lh: g('lhl'), rh: g('rhl'),
+        lb: g('lblink'), rb: g('rblink')
     };
-    
-    // Start the cycle
-    setTimeout(triggerBlink, 3000);
-    
-    // Professional Hover Reaction
-    orb.addEventListener('mouseenter', () => {
-        // We could add sound effects here if requested, 
-        // for now we just let CSS handle the visual intensification
+
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    let rAF = null, blinkLock = false;
+
+    // Eye Tracking
+    document.addEventListener('mousemove', e => {
+        if (rAF) return;
+        rAF = requestAnimationFrame(() => {
+            rAF = null;
+            const r = robo.getBoundingClientRect();
+            if (!r.width) return;
+            const sx = 120 / r.width, sy = 155 / r.height;
+            const mx = (e.clientX - r.left) * sx, my = (e.clientY - r.top) * sy;
+            
+            [[els.li, els.lp, els.lh, LE], [els.ri, els.rp, els.rh, RE]].forEach(([iris, pup, hl, eye]) => {
+                const dx = mx - eye.x, dy = my - eye.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
+                const ox = clamp(dx / d * Math.min(d * 0.22, 4.5), -4.5, 4.5);
+                const oy = clamp(dy / d * Math.min(d * 0.15, 3), -3, 3);
+                iris.setAttribute('cx', eye.x + ox); iris.setAttribute('cy', eye.y + oy);
+                pup.setAttribute('cx', eye.x + ox); pup.setAttribute('cy', eye.y + oy);
+                hl.setAttribute('cx', eye.x + ox - 4); hl.setAttribute('cy', eye.y + oy - 4);
+            });
+        });
     });
+
+    // Blink Loop
+    const startBlink = () => {
+        setTimeout(() => {
+            if (blinkLock) { startBlink(); return; }
+            blinkLock = true;
+            const t0 = performance.now(), dur = 130;
+            const animateBlink = (t) => {
+                const p = Math.min((t - t0) / dur, 1);
+                const ry = p < 0.5 ? p * 2 * 12 : (1 - (p - 0.5) * 2) * 12;
+                els.lb.setAttribute('ry', ry); els.rb.setAttribute('ry', ry);
+                if (p < 1) requestAnimationFrame(animateBlink);
+                else {
+                    els.lb.setAttribute('ry', 0); els.rb.setAttribute('ry', 0);
+                    blinkLock = false; startBlink();
+                }
+            };
+            requestAnimationFrame(animateBlink);
+        }, 1600 + Math.random() * 3200);
+    };
+    startBlink();
+
+    // Mood & Animations
+    const setMood = (txt) => {
+        moodEl.style.opacity = '0';
+        moodEl.style.transform = 'translateY(5px)';
+        setTimeout(() => {
+            moodEl.textContent = txt;
+            moodEl.style.opacity = '1';
+            moodEl.style.transform = 'translateY(0)';
+        }, 150);
+    };
+
+    robo.addEventListener('mouseenter', () => {
+        setMood('◈ hi there! ◈');
+        robo.classList.remove('float');
+        robo.classList.add('wave-anim');
+        setTimeout(() => { robo.classList.add('float'); }, 1400);
+    });
+
+    robo.addEventListener('mouseleave', () => {
+        setMood('◈ system: active. chat? ◈');
+        robo.classList.remove('wave-anim');
+    });
+
+    let clickCount = 0;
+    const clickMoods = ['◈ ouch! ◈', '◈ hehe ◈', '◈ boop! ◈', '◈ again?! ◈', '◈ beep boop ◈'];
+    
+    robo.addEventListener('click', () => {
+        robo.classList.remove('float', 'jump-anim');
+        void robo.offsetWidth; // Trigger reflow
+        robo.classList.add('jump-anim');
+        setMood(clickMoods[clickCount % clickMoods.length]);
+        clickCount++;
+        setTimeout(() => {
+            robo.classList.remove('jump-anim');
+            robo.classList.add('float');
+        }, 550);
+    });
+
+    // Mobile Scroll Visibility — Pop open from About section
+    const handleMobileScroll = () => {
+        if (window.innerWidth <= 768) {
+            const aboutSection = document.getElementById('about');
+            if (aboutSection) {
+                const aboutTop = aboutSection.getBoundingClientRect().top;
+                // Show when About section starts coming into view or user scrolls past a threshold
+                if (aboutTop < window.innerHeight * 0.8) {
+                    masterOrb.classList.remove('mobile-hide');
+                } else {
+                    masterOrb.classList.add('mobile-hide');
+                }
+            }
+        } else {
+            // Ensure visible on desktop regardless of scroll
+            masterOrb.classList.remove('mobile-hide');
+        }
+    };
+
+    window.addEventListener('scroll', handleMobileScroll);
+    handleMobileScroll(); // Initial check
 });
 
 /* ============================================
