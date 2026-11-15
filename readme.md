@@ -1,4 +1,7 @@
-# 🌌 Cinematic Portfolio — Koushik HY
+# Cinematic Portfolio Website | Three.js 3D Visuals and Responsive Web Design
+
+This repository contains a cinematic personal portfolio website built with HTML5, CSS3, vanilla JavaScript, and Three.js. The experience combines an interactive 3D hero, glass-inspired UI, animated navigation, and responsive layouts to demonstrate immersive front-end web design. See the live demo and implementation details below.
+
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/06a9675e-088a-4125-852e-4e70149ce97d/deploy-status)](https://app.netlify.com/sites/koushikhy/deploys)
 
