@@ -118,6 +118,35 @@ document.addEventListener('visibilitychange', function () {
     }
 });
 
+function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[character]);
+}
+
+function safeExternalUrl(value) {
+    try {
+        const url = new URL(value);
+        return ['https:', 'http:'].includes(url.protocol) ? escapeHTML(url.href) : '#';
+    } catch {
+        return '#';
+    }
+}
+
+function safeAssetName(value) {
+    const name = String(value ?? '');
+    return /^[a-z0-9_-]+$/i.test(name) ? name : 'project-placeholder';
+}
+
+function safeImageExtension(value) {
+    const extension = String(value ?? 'png').toLowerCase();
+    return ['png', 'jpg', 'jpeg', 'webp', 'svg'].includes(extension) ? extension : 'png';
+}
+
 async function getProjects() {
     const response = await fetch("/projects/projects.json");
     return await response.json();
@@ -128,22 +157,22 @@ function showProjects(projects) {
     let projectsHTML = "";
 
     projects.forEach(project => {
-        const ext = project.imageExt || 'png';
+        const ext = safeImageExtension(project.imageExt);
         projectsHTML += `
-        <div class="grid-item ${project.category}">
+        <div class="grid-item ${escapeHTML(project.category)}">
             <div class="box tilt">
                 <div class="image">
-                    <img draggable="false" src="/assets/images/projects/${project.image}.${ext}" alt="${project.name}" loading="lazy" />
+                    <img draggable="false" src="/assets/images/projects/${safeAssetName(project.image)}.${ext}" alt="${escapeHTML(project.name)}" loading="lazy" />
                 </div>
                 <div class="content">
-                    <h3>${project.name}</h3>
+                    <h3>${escapeHTML(project.name)}</h3>
                     <div class="desc">
-                        <p>${project.desc}</p>
+                        <p>${escapeHTML(project.desc)}</p>
                         <div class="btns">
-                            <a href="${project.links.view}" class="btn btn--view" target="_blank">
+                            <a href="${safeExternalUrl(project.links?.view)}" rel="noopener noreferrer" class="btn btn--view" target="_blank">
                                 <i class="fas fa-eye"></i> View
                             </a>
-                            <a href="${project.links.code}" class="btn btn--code" target="_blank">
+                            <a href="${safeExternalUrl(project.links?.code)}" rel="noopener noreferrer" class="btn btn--code" target="_blank">
                                 <i class="fas fa-code"></i> GitHub
                             </a>
                         </div>
