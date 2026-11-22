@@ -9,6 +9,8 @@
 
     const isMobile = window.innerWidth < 768;
     let isHeroVisible = true;
+    let animationFrameId = null;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const scene = new THREE.Scene();
 
     // Camera starts in "Deep Space" for Fly-In
@@ -94,6 +96,7 @@
     if (heroSection) {
         new IntersectionObserver((entries) => {
             isHeroVisible = entries[0].isIntersecting;
+            syncAnimation();
         }, { threshold: 0.05 }).observe(heroSection);
     }
 
@@ -101,8 +104,22 @@
     let introStartTime = null;
     let introPhase = 0; // 0: Spark, 1: Fly-In, 2: Settling
 
+    function shouldAnimate() {
+        return isHeroVisible && !document.hidden && !reducedMotion.matches;
+    }
+
+    function syncAnimation() {
+        if (shouldAnimate() && animationFrameId === null) {
+            animationFrameId = requestAnimationFrame(animate);
+        } else if (!shouldAnimate() && animationFrameId !== null) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+    }
+
     function animate() {
-        requestAnimationFrame(animate);
+        animationFrameId = null;
+        if (!shouldAnimate()) return;
 
         const time = performance.now() * 0.001;
 
@@ -141,8 +158,12 @@
         scene.rotation.x = currentMouse.y * 0.1;
 
         renderer.render(scene, camera);
+        animationFrameId = requestAnimationFrame(animate);
     }
-    animate();
+
+    document.addEventListener('visibilitychange', syncAnimation);
+    reducedMotion.addEventListener('change', syncAnimation);
+    syncAnimation();
 
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
