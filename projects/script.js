@@ -159,7 +159,7 @@ function showProjects(projects) {
     projects.forEach(project => {
         const ext = safeImageExtension(project.imageExt);
         projectsHTML += `
-        <div class="grid-item ${project.category}">
+        <div class="grid-item ${escapeHTML(project.category)}">
             <div class="box tilt">
                 <div class="image">
                     <img draggable="false" src="/assets/images/projects/${safeAssetName(project.image)}.${ext}" alt="${escapeHTML(project.name)}" loading="lazy" />
