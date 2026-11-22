@@ -384,6 +384,7 @@ function showProjects(projects) {
     let container = document.querySelector("#work .box-container");
     let html = "";
     const featured = [
+        'PageClock',
         'OpenAgent — Hybrid AI',
         'Travel GO-INDIA',
         'Android Cipher',
