@@ -389,7 +389,8 @@ function showProjects(projects) {
         'Android Cipher',
         'Focus Guard',
         'Visiting Profile',
-        'Smart City Waste Management'
+        'Smart City Waste Management',
+        'PageClock'
     ];
     const orderedProjects = featured
         .map(name => projects.find(p => p.name === name))
