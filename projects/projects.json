@@ -99,5 +99,16 @@
       "view": "https://cybercal.netlify.app",
       "code": "https://github.com/koushik4475/calculator.git"
     }
+  },
+  {
+    "name": "PageClock",
+    "desc": "PageClock is a customizable clock and productivity app featuring immersive clock themes, music previews, and a polished Android experience.",
+    "image": "pageclock-project",
+    "imageExt": "svg",
+    "category": "app",
+    "links": {
+      "view": "https://github.com/koushik4475/pageclock/releases/latest",
+      "code": "https://github.com/koushik4475/pageclock"
+    }
   }
 ]
